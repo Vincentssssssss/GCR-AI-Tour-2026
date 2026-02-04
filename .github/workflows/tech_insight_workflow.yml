@@ -65,14 +65,11 @@ jobs:
             missing=1
           fi
 
-          # Static Web Apps deployment config.
-          if [[ -z "${AZURE_RESOURCE_GROUP}" ]]; then
-            echo "Missing AZURE_RESOURCE_GROUP (set as GitHub Actions Variable or Secret)." >&2
-            missing=1
-          fi
-          if [[ -z "${SWA_NAME}" ]]; then
-            echo "Missing SWA_NAME (set as GitHub Actions Variable or Secret)." >&2
-            missing=1
+          # Static Web Apps deployment config is OPTIONAL for this workflow.
+          # If missing, we still generate + commit the latest frontend/report.md, but skip SWA deploy.
+          if [[ -z "${AZURE_RESOURCE_GROUP}" || -z "${SWA_NAME}" ]]; then
+            echo "Static Web Apps deploy is disabled (missing AZURE_RESOURCE_GROUP and/or SWA_NAME)." >&2
+            echo "- To enable: set AZURE_RESOURCE_GROUP + SWA_NAME, or run workflow: deploy-frontend-swa" >&2
           fi
 
           if [[ "${missing}" != "0" ]]; then
@@ -80,7 +77,6 @@ jobs:
             echo "How to fix (recommended):" >&2
             echo "- Run scripts/setup_github_actions_oidc.sh --configure-github (or .ps1) to auto-create OIDC + set Variables" >&2
             echo "- Or set repo Variables in: Settings → Secrets and variables → Actions → Variables" >&2
-            echo "- For Static Web Apps, set AZURE_RESOURCE_GROUP + SWA_NAME, or run workflow: deploy-frontend-swa" >&2
             exit 1
           fi
 
@@ -160,6 +156,7 @@ jobs:
 
       - name: Get SWA deployment token
         id: swa_token
+        if: ${{ env.SWA_NAME != '' && env.AZURE_RESOURCE_GROUP != '' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -187,6 +184,7 @@ jobs:
 
       - name: Deploy frontend to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
+        if: ${{ env.SWA_NAME != '' && env.AZURE_RESOURCE_GROUP != '' }}
         with:
           azure_static_web_apps_api_token: ${{ steps.swa_token.outputs.token }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
