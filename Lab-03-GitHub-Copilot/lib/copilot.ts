@@ -1,7 +1,7 @@
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const DEFAULT_MODEL_ID = "gpt-5.3-codex";
+const DEFAULT_MODEL_ID = "gpt-5.4";
 const DEFAULT_TIMEOUT_MS = 20 * 60 * 1000;
 const MODEL_LIST_ERROR_MESSAGE = "无法列出模型，请确认环境变量已配置";
 

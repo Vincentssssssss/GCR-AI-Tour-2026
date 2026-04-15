@@ -15,7 +15,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@github/copilot-sdk": "^0.1.30",
+    "@github/copilot-sdk": "^0.2.2",
     "next": "15.5.12",
     "playwright": "^1.58.2",
     "pptxgenjs": "^4.0.1",
