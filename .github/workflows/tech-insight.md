@@ -283,3 +283,22 @@ mcp-scripts:
 5. 通过 safe-outputs 的 `create-pull-request` 机制提交包含 `Lab-01-Tech-Insights/output/report.md` 和 `Lab-01-Tech-Insights/frontend/report.md` 的 PR。PR 标题应包含日期和报告摘要。不要引入额外的手工 git 流程。
 6. 最终总结需说明报告输出路径、前端同步路径和 PR 编号。
 7. 如果工具提示使用了兜底逻辑，在输出中注明。
+
+- name: Set PR date
+  id: date
+  run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+- name: Create Pull Request for Tech Insight Report
+  uses: peter-evans/create-pull-request@v5
+  with:
+    commit-message: "feat: Tech Insight Report ${{ steps.date.outputs.date }}"
+    title: "[tech-insight] Tech Insight Report ${{ steps.date.outputs.date }}"
+    labels: automation,tech-insight
+    base: main
+    branch: tech-insight-report-${{ steps.date.outputs.date }}
+    add-paths: |
+      Lab-01-Tech-Insights/output/report.md
+      Lab-01-Tech-Insights/frontend/report.md
+      Lab-01-Tech-Insights/output/raw_signals.json
+      Lab-01-Tech-Insights/output/clusters/hotspots.json
+      Lab-01-Tech-Insights/output/insights/insights.json
